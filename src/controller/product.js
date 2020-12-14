@@ -2,8 +2,11 @@ const {
   getProductModel,
   getProductCountModel,
   getProductByIdModel,
+  deleteProductByIdModel,
   postProductModel,
-  patchProductModel
+  patchProductModel,
+  sortProductModel,
+  searchProductByNameModel
 } = require('../model/product')
 const helper = require('../helper/response')
 const qs = require('querystring')
@@ -11,7 +14,7 @@ const qs = require('querystring')
 module.exports = {
   getProduct: async (request, response) => {
     try {
-      let { page, limit } = request.query
+      let { page, limit, product_name, sortBy } = request.query
       page = parseInt(page)
       limit = parseInt(limit)
       const totalData = await getProductCountModel()
@@ -25,8 +28,8 @@ module.exports = {
         page < totalPage
           ? qs.stringify({ ...request.query, ...{ page: page + 1 } })
           : null // page=...&limit=...
-      console.log(request.query)
-      console.log(qs.stringify(request.query))
+      // console.log(request.query)
+      // console.log(qs.stringify(request.query))
       const pageInfo = {
         page,
         totalPage,
@@ -35,14 +38,46 @@ module.exports = {
         nextLink: nextLink && `http://localhost:3000/product?${nextLink}`,
         prevLink: prevLink && `http://localhost:3000/product?${prevLink}`
       }
-      const result = await getProductModel(limit, offset)
-      return helper.response(
-        response,
-        200,
-        'Success Get Product',
-        result,
-        pageInfo
-      )
+      if (product_name) {
+        const result = sortBy
+          ? await sortProductModel(product_name, limit, offset, sortBy)
+          : await searchProductByNameModel(product_name, limit, offset)
+        if (result.length > 0) {
+          return helper.response(
+            response,
+            200,
+            `Success Get ${totalData} Product(s) by name ${product_name}`,
+            result,
+            pageInfo
+          )
+        } else {
+          return helper.response(
+            response,
+            200,
+            `Product with the name ${product_name} does not exist`,
+            result
+          )
+        }
+      } else {
+        const result = sortBy
+          ? await sortProductModel(limit, offset, sortBy)
+          : await getProductModel(limit, offset)
+        return helper.response(
+          response,
+          200,
+          'Success Get Product',
+          result,
+          pageInfo
+        )
+      }
+      // const result = await getProductModel(limit, offset)
+      // return helper.response(
+      //   response,
+      //   200,
+      //   'Success Get Product',
+      //   result,
+      //   pageInfo
+      // )
       // // response.status(200).send(result)
     } catch (error) {
       return helper.response(response, 400, 'Bad Request', error)
@@ -62,6 +97,21 @@ module.exports = {
       } else {
         return helper.response(response, 404, `Product By Id : ${id} Not Found`)
       }
+    } catch (error) {
+      return helper.response(response, 400, 'Bad Request', error)
+    }
+  },
+  deleteProductById: async (request, response) => {
+    try {
+      const { id } = request.params
+      const result = await deleteProductByIdModel(id)
+
+      return helper.response(
+        response,
+        200,
+        `Success Delete Product By Id : ${id}`,
+        result
+      )
     } catch (error) {
       return helper.response(response, 400, 'Bad Request', error)
     }

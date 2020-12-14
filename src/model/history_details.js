@@ -1,10 +1,10 @@
 const connection = require('../config/mysql')
 
 module.exports = {
-  getProductModel: (limit, offset) => {
+  getHistoryDetailsModel: (limit, offset) => {
     return new Promise((resolve, reject) => {
       connection.query(
-        'SELECT * FROM product LIMIT ? OFFSET ?',
+        'SELECT * FROM detail_history LIMIT ? OFFSET ?',
         [limit, offset],
         (error, result) => {
           !error ? resolve(result) : reject(new Error(error))
@@ -12,10 +12,10 @@ module.exports = {
       )
     })
   },
-  getProductByIdModel: (id) => {
+  getHistoryDetailsByIdModel: (id) => {
     return new Promise((resolve, reject) => {
       connection.query(
-        'SELECT * FROM product WHERE product_id = ?',
+        'SELECT * FROM detail_history WHERE detail_history_id = ?',
         id,
         (error, result) => {
           !error ? resolve(result) : reject(new Error(error))
@@ -23,10 +23,10 @@ module.exports = {
       )
     })
   },
-  deleteProductByIdModel: (id) => {
+  deleteHistoryDetailsByIdModel: (id) => {
     return new Promise((resolve, reject) => {
       connection.query(
-        'DELETE FROM product WHERE product_id = ?',
+        'DELETE FROM detail_history WHERE detail_history_id = ?',
         id,
         (error, result) => {
           !error ? resolve(result) : reject(new Error(error))
@@ -34,15 +34,15 @@ module.exports = {
       )
     })
   },
-  postProductModel: (setData) => {
+  postHistoryDetailsModel: (setData) => {
     return new Promise((resolve, reject) => {
       connection.query(
-        'INSERT INTO product SET ?',
+        'INSERT INTO detail_history SET ?',
         setData,
         (error, result) => {
           if (!error) {
             const newResult = {
-              product_id: result.insertId,
+              detail_history_id: result.insertId,
               ...setData
             }
             resolve(newResult)
@@ -53,15 +53,15 @@ module.exports = {
       )
     })
   },
-  patchProductModel: (setData, id) => {
+  patchHistoryDetailsModel: (setData, id) => {
     return new Promise((resolve, reject) => {
       connection.query(
-        'UPDATE product SET ? WHERE product_id = ?',
+        'UPDATE detail_history SET ? WHERE detail_history_id = ?',
         [setData, id],
         (error, result) => {
           if (!error) {
             const newResult = {
-              product_id: id,
+              detail_history_id: id,
               ...setData
             }
             resolve(newResult)
@@ -72,33 +72,12 @@ module.exports = {
       )
     })
   },
-  getProductCountModel: () => {
+  getHistoryDetailsCountModel: () => {
     return new Promise((resolve, reject) => {
       connection.query(
-        'SELECT COUNT(*) AS total FROM product',
+        'SELECT COUNT(*) AS total FROM detail_history',
         (error, result) => {
           !error ? resolve(result[0].total) : reject(new Error(error))
-        }
-      )
-    })
-  },
-  sortProductModel: (limit, offset, sortBy) => {
-    return new Promise((resolve, reject) => {
-      connection.query(
-        `SELECT * FROM product ORDER BY ${sortBy} LIMIT ? OFFSET ?`,
-        [limit, offset],
-        (error, result) => {
-          !error ? resolve(result) : reject(new Error(error))
-        }
-      )
-    })
-  },
-  searchProductByNameModel: (product_name, limit, offset) => {
-    return new Promise((resolve, reject) => {
-      connection.query(
-        `SELECT * FROM product WHERE product_name LIKE '%${product_name}%' LIMIT ${limit} OFFSET ${offset}`,
-        (error, result) => {
-          !error ? resolve(result) : reject(new Error(error))
         }
       )
     })
