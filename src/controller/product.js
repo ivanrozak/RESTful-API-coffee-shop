@@ -104,14 +104,19 @@ module.exports = {
   deleteProductById: async (request, response) => {
     try {
       const { id } = request.params
-      const result = await deleteProductByIdModel(id)
+      const checkId = await getProductByIdModel(id)
 
-      return helper.response(
-        response,
-        200,
-        `Success Delete Product By Id : ${id}`,
-        result
-      )
+      if (checkId.length > 0) {
+        const result = await deleteProductByIdModel(id)
+        return helper.response(
+          response,
+          200,
+          'Success Delete Product By Id',
+          result
+        )
+      } else {
+        return helper.response(response, 404, `Product By Id : ${id} Not Found`)
+      }
     } catch (error) {
       return helper.response(response, 400, 'Bad Request', error)
     }
@@ -159,7 +164,12 @@ module.exports = {
       if (checkId.length > 0) {
         // proses update data
         const result = await patchProductModel(setData, id)
-        console.log(result)
+        return helper.response(
+          response,
+          200,
+          'Success Update Product By Id',
+          result
+        )
       } else {
         return helper.response(response, 404, `Product By Id : ${id} Not Found`)
       }

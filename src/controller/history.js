@@ -70,14 +70,19 @@ module.exports = {
   deleteHistoryById: async (request, response) => {
     try {
       const { id } = request.params
-      const result = await deleteHistoryByIdModel(id)
+      const checkId = await getHistoryByIdModel(id)
 
-      return helper.response(
-        response,
-        200,
-        `Success Delete History By Id : ${id}`,
-        result
-      )
+      if (checkId.length > 0) {
+        const result = await deleteHistoryByIdModel(id)
+        return helper.response(
+          response,
+          200,
+          'Success Delete History By Id',
+          result
+        )
+      } else {
+        return helper.response(response, 404, `History By Id : ${id} Not Found`)
+      }
     } catch (error) {
       return helper.response(response, 400, 'Bad Request', error)
     }
@@ -118,7 +123,7 @@ module.exports = {
       if (checkId.length > 0) {
         // proses update data
         const result = await patchHistoryModel(setData, id)
-        console.log(result)
+        return helper.response(response, 200, 'Update History Success', result)
       } else {
         return helper.response(response, 404, `History By Id : ${id} Not Found`)
       }

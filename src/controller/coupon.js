@@ -70,14 +70,19 @@ module.exports = {
   deleteCouponById: async (request, response) => {
     try {
       const { id } = request.params
-      const result = await deleteCouponByIdModel(id)
+      const checkId = await getCouponByIdModel(id)
 
-      return helper.response(
-        response,
-        200,
-        `Success Delete Coupon By Id : ${id}`,
-        result
-      )
+      if (checkId.length > 0) {
+        const result = await deleteCouponByIdModel(id)
+        return helper.response(
+          response,
+          200,
+          'Success Delete Coupon By Id',
+          result
+        )
+      } else {
+        return helper.response(response, 404, `Coupon By Id : ${id} Not Found`)
+      }
     } catch (error) {
       return helper.response(response, 400, 'Bad Request', error)
     }
@@ -133,7 +138,12 @@ module.exports = {
       if (checkId.length > 0) {
         // proses update data
         const result = await patchCouponModel(setData, id)
-        console.log(result)
+        return helper.response(
+          response,
+          200,
+          'Success Update Coupon By Id',
+          result
+        )
       } else {
         return helper.response(response, 404, `Coupon By Id : ${id} Not Found`)
       }

@@ -1,6 +1,8 @@
-<h1 align="center">ExpressJS - #Nama_Projek RESTfull API</h1>
+<h1 align="center">ExpressJS - Coffee Shop Ecommerce RESTfull API</h1>
 
-#background_projek. [More about Express](https://en.wikipedia.org/wiki/Express.js)
+In this Project I built a RESTful API using nodejs expressjs and mySQL to handle server side for my Coffee Shop Web App.
+
+[More about Express](https://en.wikipedia.org/wiki/Express.js)
 
 ## Built With
 
@@ -32,6 +34,12 @@ Open .env file on your favorite code editor, and copy paste this code below :
 ```
 DB_HOST=localhost // Database host
 ```
+
+## Set up End Point Using Postman
+
+Use end point below :
+
+https://documenter.getpostman.com/view/11826307/TVsoGpzv
 
 ## License
 
