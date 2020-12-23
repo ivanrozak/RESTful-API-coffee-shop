@@ -1,4 +1,5 @@
 const router = require('express').Router()
+const { authorization } = require('../middleware/auth')
 const {
   getCoupon,
   getCouponById,
@@ -7,10 +8,10 @@ const {
   patchCoupon
 } = require('../controller/coupon')
 
-router.get('/', getCoupon)
-router.get('/:id', getCouponById)
-router.delete('/:id', deleteCouponById)
-router.post('/', postCoupon)
-router.patch('/:id', patchCoupon)
+router.get('/', authorization, getCoupon)
+router.get('/:id', authorization, getCouponById)
+router.delete('/:id', authorization, deleteCouponById)
+router.post('/', authorization, postCoupon)
+router.patch('/:id', authorization, patchCoupon)
 
 module.exports = router

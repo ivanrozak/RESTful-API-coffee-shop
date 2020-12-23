@@ -1,4 +1,5 @@
 const router = require('express').Router()
+const { authorization } = require('../middleware/auth')
 const {
   getHistory,
   getHistoryById,
@@ -7,10 +8,10 @@ const {
   patchHistory
 } = require('../controller/history')
 
-router.get('/', getHistory)
-router.get('/:id', getHistoryById)
-router.delete('/:id', deleteHistoryById)
-router.post('/', postHistory)
-router.patch('/:id', patchHistory)
+router.get('/', authorization, getHistory)
+router.get('/:id', authorization, getHistoryById)
+router.delete('/:id', authorization, deleteHistoryById)
+router.post('/', authorization, postHistory)
+router.patch('/:id', authorization, patchHistory)
 
 module.exports = router
