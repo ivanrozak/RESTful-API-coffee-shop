@@ -7,6 +7,7 @@ const routesNavigation = require('./src/routesNavigation')
 // =====================
 const app = express()
 app.use(morgan('dev'))
+app.use(express.static('uploads')) // agar folder uploads bisa diakses semua browser/user, tanpa ini : path not found
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({ extended: false }))
 app.use(cors())

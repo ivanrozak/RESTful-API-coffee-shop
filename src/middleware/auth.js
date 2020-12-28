@@ -17,12 +17,22 @@ module.exports = {
         } else {
           // proses pengecekan role
           console.log(result)
-          request.token = result
-          next()
+          request.decodeToken = result
+          next() // untuk lanjut ke proses middleware berikutnya
         }
       })
     } else {
       return helper.response(response, 400, 'Please Login First !')
+    }
+  },
+  isAdmin: (request, response, next) => {
+    console.log('middle  ware is admin')
+    console.log(request.decodeToken) // akan ada property user role
+    // check kondisi apakah rolenya bisa akses atau tidak
+    if (request.decodeToken.user_role < 1) {
+      return helper.response(response, 400, 'Access Denied!')
+    } else {
+      next()
     }
   }
 }

@@ -1,5 +1,11 @@
 const router = require('express').Router()
-const { authorization } = require('../middleware/auth')
+const uploadImage = require('../middleware/multer')
+const { authorization, isAdmin } = require('../middleware/auth')
+const {
+  getProductByIdRedis,
+  getProductRedis,
+  clearDataProductRedis
+} = require('../middleware/redis')
 const {
   getProduct,
   getProductById,
@@ -8,10 +14,22 @@ const {
   patchProduct
 } = require('../controller/product')
 
-router.get('/', authorization, getProduct) // http://localhost:3000/product
-router.get('/:id', authorization, getProductById) // http://localhost:3000/product/1
-router.delete('/:id', authorization, deleteProductById)
-router.post('/', authorization, postProduct)
-router.patch('/:id', authorization, patchProduct)
+router.get('/', getProductRedis, getProduct) // http://localhost:3000/product
+router.get('/:id', getProductByIdRedis, getProductById) // http://localhost:3000/product/1
+router.delete(
+  '/:id',
+  authorization,
+  isAdmin,
+  clearDataProductRedis,
+  deleteProductById
+)
+router.post('/', authorization, isAdmin, uploadImage, postProduct)
+router.patch(
+  '/:id',
+  authorization,
+  isAdmin,
+  clearDataProductRedis,
+  patchProduct
+) // diclear data agar tidak ngeupdate data redisnya (tidak tersimpan di db)
 
 module.exports = router

@@ -8,7 +8,7 @@ module.exports = {
     // console.log(request.body)
 
     try {
-      const { user_name, user_email, user_password } = request.body
+      const { user_name, user_email, user_password, user_role } = request.body
       const salt = bcrypt.genSaltSync(10)
       //   mengacak nilai sebanyak
       const encryptPassword = bcrypt.hashSync(user_password, salt)
@@ -18,6 +18,7 @@ module.exports = {
         user_name,
         user_email,
         user_password: encryptPassword,
+        user_role,
         user_created_at: new Date()
       }
       const result = await registerUserModel(setData)
@@ -42,14 +43,16 @@ module.exports = {
         console.log(checkPassword)
         if (checkPassword) {
           // proses 3 kita akan set JWT supaya menghasilkan token
-          const { user_id, user_name, user_email } = checkDataUser[0]
+          const { user_id, user_name, user_email, user_role } = checkDataUser[0]
           const payload = {
             user_id,
             user_name,
-            user_email
+            user_email,
+            user_role
+            // user role &status masuk
           }
-          const token = jwt.sign(payload, 'RAHASIA', { expiresIn: '1h' })
-          //   console.log(token)
+          const token = jwt.sign(payload, 'RAHASIA', { expiresIn: '24h' })
+          // console.log(token)
           const result = { ...payload, token }
           return helper.response(response, 200, 'Success get token !', result)
         } else {
