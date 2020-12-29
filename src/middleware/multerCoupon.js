@@ -3,7 +3,7 @@ const helper = require('../helper/response')
 
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
-    cb(null, './uploads')
+    cb(null, './uploads/coupons')
   },
   filename: function (req, file, cb) {
     console.log(file)
@@ -26,7 +26,7 @@ const uploadLimit = multer({
   storage: storage,
   fileFilter,
   limits: { fileSize: 2 * 1024 * 1024 }
-}).single('product_image')
+}).single('coupon_image')
 
 // const upload = multer({ storage, fileFilter }).single('product_image')
 

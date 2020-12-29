@@ -101,6 +101,7 @@ module.exports = {
       const setData = {
         coupon_code,
         coupon_discount,
+        coupon_image: request.file === undefined ? '' : request.file.filename,
         coupon_min_purchase,
         coupon_max_limit,
         coupon_start,
@@ -128,6 +129,7 @@ module.exports = {
       const setData = {
         coupon_code,
         coupon_discount,
+        coupon_image: request.file === undefined ? '' : request.file.filename,
         coupon_min_purchase,
         coupon_max_limit,
         coupon_start,

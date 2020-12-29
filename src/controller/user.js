@@ -1,7 +1,11 @@
 const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken')
 const helper = require('../helper/response')
-const { registerUserModel, checkEmailModel } = require('../model/user')
+const {
+  registerUserModel,
+  checkEmailModel,
+  patchUserModel
+} = require('../model/user')
 
 module.exports = {
   registerUser: async (request, response) => {
@@ -63,6 +67,51 @@ module.exports = {
           response,
           400,
           'Email / Account not registered !'
+        )
+      }
+    } catch (error) {
+      return helper.response(response, 400, 'Bad Request', error)
+    }
+  },
+  updateUser: async (request, response) => {
+    try {
+      const { email } = request.params
+      const {
+        user_name,
+        user_displayname,
+        user_firstname,
+        user_lastname,
+        user_gender,
+        user_password,
+        user_contact,
+        user_birth
+      } = request.body
+
+      const setData = {
+        user_name,
+        user_displayname,
+        user_firstname,
+        user_lastname,
+        user_gender,
+        user_password,
+        user_contact,
+        user_image: request.file === undefined ? '' : request.file.filename,
+        user_birth
+      }
+      const checkEmail = await checkEmailModel(email)
+      if (checkEmail.length > 0) {
+        const result = await patchUserModel(setData, email)
+        return helper.response(
+          response,
+          200,
+          'Success Update Your Profile',
+          result
+        )
+      } else {
+        return helper.response(
+          response,
+          404,
+          `User by Email: ${email} Not Found`
         )
       }
     } catch (error) {
