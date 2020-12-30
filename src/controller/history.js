@@ -4,7 +4,10 @@ const {
   getHistoryByIdModel,
   deleteHistoryByIdModel,
   postHistoryModel,
-  patchHistoryModel
+  patchHistoryModel,
+  getHistoryYearlyModel,
+  getHistoryWeeklyModel,
+  getHistoryDailyModel
 } = require('../model/history')
 const helper = require('../helper/response')
 const qs = require('querystring')
@@ -127,6 +130,46 @@ module.exports = {
       } else {
         return helper.response(response, 404, `History By Id : ${id} Not Found`)
       }
+    } catch (error) {
+      return helper.response(response, 400, 'Bad Request', error)
+    }
+  },
+  getHistoryYearly: async (_request, response) => {
+    try {
+      const result = await getHistoryYearlyModel()
+      return helper.response(
+        response,
+        200,
+        'Success get sub_total Yearly',
+        result
+      )
+    } catch (error) {
+      return helper.response(response, 400, 'Bad Request', error)
+    }
+  },
+  getHistoryWeekly: async (_request, response) => {
+    try {
+      const result = await getHistoryWeeklyModel()
+      return helper.response(
+        response,
+        200,
+        'Success get sub_total Weekly',
+        result
+      )
+    } catch (error) {
+      return helper.response(response, 400, 'Bad Request', error)
+    }
+  },
+  getHistoryDaily: async (_request, response) => {
+    try {
+      const dateNow = new Date().toISOString().slice(0, 10)
+      const result = await getHistoryDailyModel(dateNow)
+      return helper.response(
+        response,
+        200,
+        'Success get sub_total Daily',
+        result
+      )
     } catch (error) {
       return helper.response(response, 400, 'Bad Request', error)
     }

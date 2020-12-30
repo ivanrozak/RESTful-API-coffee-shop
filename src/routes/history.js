@@ -1,17 +1,23 @@
 const router = require('express').Router()
-const { authorization } = require('../middleware/auth')
+const { authorization, isAdmin } = require('../middleware/auth')
 const {
   getHistory,
   getHistoryById,
   deleteHistoryById,
   postHistory,
-  patchHistory
+  patchHistory,
+  getHistoryYearly,
+  getHistoryWeekly,
+  getHistoryDaily
 } = require('../controller/history')
 
-router.get('/', authorization, getHistory)
+router.get('/', authorization, isAdmin, getHistory)
 router.get('/:id', authorization, getHistoryById)
-router.delete('/:id', authorization, deleteHistoryById)
+router.delete('/:id', authorization, isAdmin, deleteHistoryById)
 router.post('/', authorization, postHistory)
-router.patch('/:id', authorization, patchHistory)
+router.patch('/:id', authorization, isAdmin, patchHistory)
+router.get('/total/year', authorization, isAdmin, getHistoryYearly)
+router.get('/total/week', authorization, isAdmin, getHistoryWeekly)
+router.get('/total/day', authorization, isAdmin, getHistoryDaily)
 
 module.exports = router
