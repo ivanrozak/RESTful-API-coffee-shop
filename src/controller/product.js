@@ -120,7 +120,7 @@ module.exports = {
       const checkId = await getProductByIdModel(id)
 
       if (checkId.length > 0) {
-        fs.unlink(`../../uploads/${checkId[0].product_image}`, (err) => {
+        fs.unlink(`./uploads/products/${checkId[0].product_image}`, (err) => {
           if (err) throw err
           console.log('Success delete image product')
         })
@@ -173,16 +173,34 @@ module.exports = {
         product_status
       } = request.body
       // disini kondisi validation
-      const setData = {
-        category_id,
-        product_name,
-        product_price,
-        product_image: request.file === undefined ? '' : request.file.filename,
-        product_updated_at: new Date(),
-        product_status
-      }
+
       const checkId = await getProductByIdModel(id)
+
       if (checkId.length > 0) {
+        let updateImg
+        // const productId = await getProductByIdModel(id)
+
+        if (request.file === undefined) {
+          updateImg = checkId[0].product_image
+        } else if (request.file.filename !== checkId[0].product_image) {
+          updateImg = {
+            product_image:
+              request.file === undefined ? '' : request.file.filename
+          }
+          fs.unlink(`./uploads/products/${checkId[0].product_image}`, (err) => {
+            if (err) throw err
+            console.log('Success delete image product')
+          })
+        }
+
+        const setData = {
+          category_id,
+          product_name,
+          product_price,
+          product_image: updateImg,
+          product_updated_at: new Date(),
+          product_status
+        }
         // proses update data
         const result = await patchProductModel(setData, id)
         return helper.response(

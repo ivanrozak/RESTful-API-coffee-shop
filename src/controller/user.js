@@ -25,6 +25,15 @@ module.exports = {
         user_role,
         user_created_at: new Date()
       }
+
+      const checkSameEmail = await checkEmailModel(user_email)
+      if (checkSameEmail.length > 0) {
+        return helper.response(
+          response,
+          400,
+          'Email has been used by another user, try with another email'
+        )
+      }
       const result = await registerUserModel(setData)
       return helper.response(response, 200, 'Success Post User', result)
       // kondisi cek email apakah sudah didatabase?
@@ -78,28 +87,35 @@ module.exports = {
       const { email } = request.params
       const {
         user_name,
-        user_displayname,
         user_firstname,
         user_lastname,
         user_gender,
-        user_password,
         user_contact,
         user_birth
       } = request.body
 
       const setData = {
         user_name,
-        user_displayname,
         user_firstname,
         user_lastname,
         user_gender,
-        user_password,
         user_contact,
         user_image: request.file === undefined ? '' : request.file.filename,
-        user_birth
+        user_birth,
+        user_updated_at: new Date()
       }
       const checkEmail = await checkEmailModel(email)
       if (checkEmail.length > 0) {
+        // let userImage
+        // if (request.file === undefined) {
+        //   userImage = {
+        //     user_image: checkEmail[0].user_image
+        //   }
+        // } else if (checkEmail[0].user_image === '') {
+        //   userImage = {
+        //     user_image: request.file === undefined ? '' : request.file.filename
+        //   }
+        // } else if ()
         const result = await patchUserModel(setData, email)
         return helper.response(
           response,
