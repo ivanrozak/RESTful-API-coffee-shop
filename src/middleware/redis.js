@@ -39,15 +39,16 @@ module.exports = {
       (error, result) => {
         if (!error && result != null) {
           const newResult = JSON.parse(result)
+          console.log('data in redis')
           return helper.response(
             response,
             200,
-            'Success get Product',
+            'Success get Product redis',
             newResult.result,
             newResult.pageInfo
           )
         } else {
-          console.log('tidak ada')
+          console.log('tidak ada dalam redis')
           next()
         }
       }

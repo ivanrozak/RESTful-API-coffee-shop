@@ -30,9 +30,7 @@ module.exports = {
       const nextLink =
         page < totalPage
           ? qs.stringify({ ...request.query, ...{ page: page + 1 } })
-          : null // page=...&limit=...
-      // console.log(request.query)
-      // console.log(qs.stringify(request.query))
+          : null
       const pageInfo = {
         page,
         totalPage,
@@ -47,6 +45,12 @@ module.exports = {
           ? await sortProductModel(product_name, limit, offset, sortBy)
           : await searchProductByNameModel(product_name, limit, offset)
         if (result.length > 0) {
+          const newData = { result, pageInfo }
+          client.setex(
+            `getproduct:${JSON.stringify(request.query)}`,
+            3600,
+            JSON.stringify(newData)
+          )
           return helper.response(
             response,
             200,
@@ -80,16 +84,6 @@ module.exports = {
           pageInfo
         )
       }
-
-      // const result = await getProductModel(limit, offset)
-      // return helper.response(
-      //   response,
-      //   200,
-      //   'Success Get Product',
-      //   result,
-      //   pageInfo
-      // )
-      // // response.status(200).send(result)
     } catch (error) {
       return helper.response(response, 400, 'Bad Request', error)
     }
@@ -99,7 +93,6 @@ module.exports = {
       const { id } = request.params
       const result = await getProductByIdModel(id)
       if (result.length > 0) {
-        // redis
         client.setex(`getproductbyid:${id}`, 3600, JSON.stringify(result))
         return helper.response(
           response,
@@ -174,41 +167,37 @@ module.exports = {
       } = request.body
       // disini kondisi validation
 
+      let newImg
+      const checkImg = await getProductByIdModel(id)
+
+      if (request.file === undefined) {
+        newImg = checkImg[0].product_image
+      } else {
+        newImg = request.file.filename
+        fs.unlink(`./uploads/products/${checkImg[0].product_image}`, (err) => {
+          if (err) throw err
+          console.log('Success Delete Image')
+        })
+      }
+
+      const setData = {
+        category_id,
+        product_name,
+        product_price,
+        product_image: newImg,
+        product_updated_at: new Date(),
+        product_status
+      }
       const checkId = await getProductByIdModel(id)
 
       if (checkId.length > 0) {
-        let updateImg
-        // // const productId = await getProductByIdModel(id)
-
-        if (request.file === undefined) {
-          updateImg = checkId[0].product_image
-        } else if (request.file.filename !== checkId[0].product_image) {
-          fs.unlink(`./uploads/products/${checkId[0].product_image}`, (err) => {
-            if (err) throw err
-            console.log('Success delete image product')
-          })
-          updateImg = {
-            product_image:
-              request.file === undefined ? '' : request.file.filename
-          }
-        }
-        const setData = {
-          category_id,
-          product_name,
-          product_price,
-          product_updated_at: new Date(),
-          product_status
-        }
-        const allUpdate = { ...updateImg, ...setData }
-        const result = await patchProductModel(allUpdate, id)
+        const result = await patchProductModel(setData, id)
         return helper.response(
           response,
           200,
           'Success Update Product By Id',
           result
         )
-
-        // proses update data
       } else {
         return helper.response(response, 404, `Product By Id : ${id} Not Found`)
       }

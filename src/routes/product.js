@@ -29,6 +29,7 @@ router.patch(
   authorization,
   isAdmin,
   clearDataProductRedis,
+  uploadImage,
   patchProduct
 ) // diclear data agar tidak ngeupdate data redisnya (tidak tersimpan di db)
 
