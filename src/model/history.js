@@ -111,5 +111,15 @@ module.exports = {
         }
       )
     })
+  },
+  getHistoryByUserIdModel: (user_id) => {
+    return new Promise((resolve, reject) => {
+      connection.query(
+        `SELECT * FROM history WHERE user_id = ${user_id}`,
+        (error, result) => {
+          !error ? resolve(result) : reject(new Error(error))
+        }
+      )
+    })
   }
 }

@@ -178,37 +178,37 @@ module.exports = {
 
       if (checkId.length > 0) {
         let updateImg
-        // const productId = await getProductByIdModel(id)
+        // // const productId = await getProductByIdModel(id)
 
         if (request.file === undefined) {
           updateImg = checkId[0].product_image
         } else if (request.file.filename !== checkId[0].product_image) {
-          updateImg = {
-            product_image:
-              request.file === undefined ? '' : request.file.filename
-          }
           fs.unlink(`./uploads/products/${checkId[0].product_image}`, (err) => {
             if (err) throw err
             console.log('Success delete image product')
           })
+          updateImg = {
+            product_image:
+              request.file === undefined ? '' : request.file.filename
+          }
         }
-
         const setData = {
           category_id,
           product_name,
           product_price,
-          product_image: updateImg,
           product_updated_at: new Date(),
           product_status
         }
-        // proses update data
-        const result = await patchProductModel(setData, id)
+        const allUpdate = { ...updateImg, ...setData }
+        const result = await patchProductModel(allUpdate, id)
         return helper.response(
           response,
           200,
           'Success Update Product By Id',
           result
         )
+
+        // proses update data
       } else {
         return helper.response(response, 404, `Product By Id : ${id} Not Found`)
       }

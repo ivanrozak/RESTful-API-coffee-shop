@@ -7,7 +7,8 @@ const {
   patchHistoryModel,
   getHistoryYearlyModel,
   getHistoryWeeklyModel,
-  getHistoryDailyModel
+  getHistoryDailyModel,
+  getHistoryByUserIdModel
 } = require('../model/history')
 const helper = require('../helper/response')
 const qs = require('querystring')
@@ -170,6 +171,30 @@ module.exports = {
         'Success get sub_total Daily',
         result
       )
+    } catch (error) {
+      return helper.response(response, 400, 'Bad Request', error)
+    }
+  },
+  getHistoryByUserId: async (request, response) => {
+    try {
+      const { user_id } = request.params
+      const result = await getHistoryByUserIdModel(user_id)
+      console.log(result)
+
+      if (result.length > 0) {
+        return helper.response(
+          response,
+          200,
+          `Success get user ${user_id} history`,
+          result
+        )
+      } else {
+        return helper.response(
+          response,
+          404,
+          `History by user ${user_id} Not Found`
+        )
+      }
     } catch (error) {
       return helper.response(response, 400, 'Bad Request', error)
     }

@@ -8,7 +8,8 @@ const {
   patchHistory,
   getHistoryYearly,
   getHistoryWeekly,
-  getHistoryDaily
+  getHistoryDaily,
+  getHistoryByUserId
 } = require('../controller/history')
 
 router.get('/', authorization, isAdmin, getHistory)
@@ -19,5 +20,6 @@ router.patch('/:id', authorization, isAdmin, patchHistory)
 router.get('/total/year', authorization, isAdmin, getHistoryYearly)
 router.get('/total/week', authorization, isAdmin, getHistoryWeekly)
 router.get('/total/day', authorization, isAdmin, getHistoryDaily)
+router.get('/user/:user_id', authorization, isAdmin, getHistoryByUserId)
 
 module.exports = router
