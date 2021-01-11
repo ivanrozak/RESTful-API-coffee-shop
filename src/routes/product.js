@@ -14,8 +14,8 @@ const {
   patchProduct
 } = require('../controller/product')
 
-router.get('/', getProductRedis, getProduct) // http://localhost:3000/product
-router.get('/:id', getProductByIdRedis, getProductById) // http://localhost:3000/product/1
+router.get('/', authorization, getProductRedis, getProduct) // http://localhost:3000/product
+router.get('/:id', authorization, getProductByIdRedis, getProductById) // http://localhost:3000/product/1
 router.delete(
   '/:id',
   authorization,

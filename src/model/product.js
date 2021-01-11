@@ -82,10 +82,10 @@ module.exports = {
       )
     })
   },
-  sortProductModel: (limit, offset, sortBy) => {
+  sortProductModel: (limit, offset, sortBy, category_id) => {
     return new Promise((resolve, reject) => {
       connection.query(
-        `SELECT * FROM product ORDER BY ${sortBy} LIMIT ? OFFSET ?`,
+        `SELECT * FROM product WHERE category_id LIKE '%${category_id}%' ORDER BY ${sortBy} LIMIT ? OFFSET ?`,
         [limit, offset],
         (error, result) => {
           !error ? resolve(result) : reject(new Error(error))
@@ -97,6 +97,52 @@ module.exports = {
     return new Promise((resolve, reject) => {
       connection.query(
         `SELECT * FROM product WHERE product_name LIKE '%${product_name}%' LIMIT ${limit} OFFSET ${offset}`,
+        (error, result) => {
+          !error ? resolve(result) : reject(new Error(error))
+        }
+      )
+    })
+  },
+  searchProductByNameCatModel: (product_name, category_id, limit, offset) => {
+    return new Promise((resolve, reject) => {
+      connection.query(
+        `SELECT * FROM product WHERE product_name LIKE '%${product_name}%' AND category_id LIKE '%${category_id}%' LIMIT ${limit} OFFSET ${offset}`,
+        (error, result) => {
+          !error ? resolve(result) : reject(new Error(error))
+        }
+      )
+    })
+  },
+  getProductByCatModel: (category_id, limit, offset) => {
+    return new Promise((resolve, reject) => {
+      connection.query(
+        `SELECT * FROM product WHERE category_id = '${category_id}' LIMIT ${limit} OFFSET ${offset}`,
+        (error, result) => {
+          !error ? resolve(result) : reject(new Error(error))
+        }
+      )
+    })
+  },
+  getProductByNameCatSortModel: (
+    product_name,
+    category_id,
+    sortBy,
+    limit,
+    offset
+  ) => {
+    return new Promise((resolve, reject) => {
+      connection.query(
+        `SELECT * FROM product WHERE product_name LIKE '%${product_name}' AND category_id LIKE '%${category_id}%' ORDER BY ${sortBy} LIMIT ${limit} OFFSET ${offset}`,
+        (error, result) => {
+          !error ? resolve(result) : reject(new Error(error))
+        }
+      )
+    })
+  },
+  getProductByNameSortModel: (product_name, sortBy, limit, offset) => {
+    return new Promise((resolve, reject) => {
+      connection.query(
+        `SELECT * FROM product WHERE product_name LIKE '%${product_name}' ORDER BY ${sortBy} LIMIT ${limit} OFFSET ${offset}`,
         (error, result) => {
           !error ? resolve(result) : reject(new Error(error))
         }

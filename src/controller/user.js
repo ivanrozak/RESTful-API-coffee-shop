@@ -12,14 +12,19 @@ module.exports = {
     // console.log(request.body)
 
     try {
-      const { user_name, user_email, user_password, user_role } = request.body
+      const {
+        user_contact,
+        user_email,
+        user_password,
+        user_role
+      } = request.body
       const salt = bcrypt.genSaltSync(10)
       //   mengacak nilai sebanyak
       const encryptPassword = bcrypt.hashSync(user_password, salt)
       // console.log('before Encrypt = ' + user_password)
       // console.log('after Encrypt = ' + encryptPassword)
       const setData = {
-        user_name,
+        user_contact,
         user_email,
         user_password: encryptPassword,
         user_role,
@@ -106,16 +111,6 @@ module.exports = {
       }
       const checkEmail = await checkEmailModel(email)
       if (checkEmail.length > 0) {
-        // let userImage
-        // if (request.file === undefined) {
-        //   userImage = {
-        //     user_image: checkEmail[0].user_image
-        //   }
-        // } else if (checkEmail[0].user_image === '') {
-        //   userImage = {
-        //     user_image: request.file === undefined ? '' : request.file.filename
-        //   }
-        // } else if ()
         const result = await patchUserModel(setData, email)
         return helper.response(
           response,

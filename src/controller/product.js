@@ -5,8 +5,11 @@ const {
   deleteProductByIdModel,
   postProductModel,
   patchProductModel,
-  sortProductModel,
-  searchProductByNameModel
+  // sortProductModel,
+  searchProductByNameModel,
+  getProductByNameCatSortModel,
+  getProductByCatModel,
+  getProductByNameSortModel
 } = require('../model/product')
 const helper = require('../helper/response')
 const qs = require('querystring')
@@ -17,9 +20,11 @@ const client = redis.createClient()
 module.exports = {
   getProduct: async (request, response) => {
     try {
-      let { page, limit, product_name, sortBy } = request.query
+      let { page, limit, product_name, sortBy, category_id } = request.query
       page = parseInt(page)
       limit = parseInt(limit)
+
+      category_id = parseInt(category_id)
       const totalData = await getProductCountModel()
       const totalPage = Math.ceil(totalData / limit)
       const offset = page * limit - limit
@@ -39,11 +44,19 @@ module.exports = {
         nextLink: nextLink && `http://localhost:3000/product?${nextLink}`,
         prevLink: prevLink && `http://localhost:3000/product?${prevLink}`
       }
-
       if (product_name) {
-        const result = sortBy
-          ? await sortProductModel(product_name, limit, offset, sortBy)
+        const result = category_id
+          ? await getProductByNameCatSortModel(
+              product_name,
+              category_id,
+              sortBy,
+              limit,
+              offset
+            )
+          : sortBy
+          ? await getProductByNameSortModel(product_name, sortBy, limit, offset)
           : await searchProductByNameModel(product_name, limit, offset)
+
         if (result.length > 0) {
           const newData = { result, pageInfo }
           client.setex(
@@ -67,9 +80,13 @@ module.exports = {
           )
         }
       } else {
-        const result = sortBy
-          ? await sortProductModel(limit, offset, sortBy)
-          : await getProductModel(limit, offset)
+        const result =
+          // sortBy
+          //   ? await sortProductModel(category_id, sortBy, limit, offset)
+          //   :
+          category_id
+            ? await getProductByCatModel(category_id, limit, offset)
+            : await getProductModel(limit, offset)
         const newData = { result, pageInfo }
         client.setex(
           `getproduct:${JSON.stringify(request.query)}`,
@@ -136,18 +153,44 @@ module.exports = {
       const {
         category_id,
         product_name,
+        product_desc,
+        product_qty,
         product_price,
-        product_status
+        product_status,
+        time_start,
+        time_end,
+        product_sizeR,
+        product_sizeL,
+        product_sizeXL,
+        product_size250,
+        product_size300,
+        product_size500,
+        product_deliv_home,
+        product_deliv_dine,
+        product_deliv_take
       } = request.body
       // disini kondisi validation
       // console.log(request.file)
       const setData = {
         category_id,
         product_name,
+        product_desc,
+        product_qty,
         product_price,
         product_image: request.file === undefined ? '' : request.file.filename,
         product_created_at: new Date(),
-        product_status
+        product_status,
+        time_start,
+        time_end,
+        product_sizeR,
+        product_sizeL,
+        product_sizeXL,
+        product_size250,
+        product_size300,
+        product_size500,
+        product_deliv_home,
+        product_deliv_dine,
+        product_deliv_take
       }
       console.log(setData)
       const result = await postProductModel(setData)
@@ -160,10 +203,21 @@ module.exports = {
     try {
       const { id } = request.params
       const {
-        category_id,
+        // category_id,
         product_name,
         product_price,
-        product_status
+        product_desc,
+        product_status,
+        product_qty,
+        product_sizeR,
+        product_sizeL,
+        product_sizeXL,
+        product_size250,
+        product_size300,
+        product_size500,
+        product_deliv_home,
+        product_deliv_dine,
+        product_deliv_take
       } = request.body
       // disini kondisi validation
 
@@ -181,12 +235,23 @@ module.exports = {
       }
 
       const setData = {
-        category_id,
+        // category_id,
         product_name,
         product_price,
+        product_desc,
         product_image: newImg,
         product_updated_at: new Date(),
-        product_status
+        product_status,
+        product_qty,
+        product_sizeR,
+        product_sizeL,
+        product_sizeXL,
+        product_size250,
+        product_size300,
+        product_size500,
+        product_deliv_home,
+        product_deliv_dine,
+        product_deliv_take
       }
       const checkId = await getProductByIdModel(id)
 
