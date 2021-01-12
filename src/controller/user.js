@@ -96,6 +96,7 @@ module.exports = {
         user_lastname,
         user_gender,
         user_contact,
+        user_address,
         user_birth
       } = request.body
 
@@ -104,6 +105,7 @@ module.exports = {
         user_firstname,
         user_lastname,
         user_gender,
+        user_address,
         user_contact,
         user_image: request.file === undefined ? '' : request.file.filename,
         user_birth,
@@ -123,6 +125,28 @@ module.exports = {
           response,
           404,
           `User by Email: ${email} Not Found`
+        )
+      }
+    } catch (error) {
+      return helper.response(response, 400, 'Bad Request', error)
+    }
+  },
+  getUserByEmail: async (request, response) => {
+    try {
+      const { email } = request.params
+      const result = await checkEmailModel(email)
+      if (result.length > 0) {
+        return helper.response(
+          response,
+          200,
+          'Success Get User By Email',
+          result
+        )
+      } else {
+        return helper.response(
+          response,
+          404,
+          `User By Email : ${email} Not Found`
         )
       }
     } catch (error) {

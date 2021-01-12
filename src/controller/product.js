@@ -54,8 +54,8 @@ module.exports = {
               offset
             )
           : sortBy
-          ? await getProductByNameSortModel(product_name, sortBy, limit, offset)
-          : await searchProductByNameModel(product_name, limit, offset)
+            ? await getProductByNameSortModel(product_name, sortBy, limit, offset)
+            : await searchProductByNameModel(product_name, limit, offset)
 
         if (result.length > 0) {
           const newData = { result, pageInfo }
