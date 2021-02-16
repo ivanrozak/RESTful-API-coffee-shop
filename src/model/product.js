@@ -1,17 +1,6 @@
 const connection = require('../config/mysql')
 
 module.exports = {
-  getProductModel: (limit, offset) => {
-    return new Promise((resolve, reject) => {
-      connection.query(
-        'SELECT * FROM product LIMIT ? OFFSET ?',
-        [limit, offset],
-        (error, result) => {
-          !error ? resolve(result) : reject(new Error(error))
-        }
-      )
-    })
-  },
   getProductByIdModel: (id) => {
     return new Promise((resolve, reject) => {
       connection.query(
@@ -72,77 +61,34 @@ module.exports = {
       )
     })
   },
-  getProductCountModel: () => {
+  getProductCountModel: (product_name, category_id) => {
+    const blank = ''
+    const name =
+      product_name !== ''
+        ? ` product_name LIKE '%${product_name}%'`
+        : ` product_name LIKE '%${blank}%'`
+    const cat = category_id !== '' ? ` AND category_id = ${category_id}` : ''
     return new Promise((resolve, reject) => {
       connection.query(
-        'SELECT COUNT(*) AS total FROM product',
+        `SELECT COUNT(*) AS total FROM product WHERE ${name}${cat}`,
         (error, result) => {
           !error ? resolve(result[0].total) : reject(new Error(error))
         }
       )
     })
   },
-  sortProductModel: (limit, offset, sortBy, category_id) => {
+  getProductModel: (product_name, category_id, sortBy, limit, offset) => {
+    const blank = ''
+    const defsort = 'product_created_at DESC'
+    const name =
+      product_name !== ''
+        ? ` product_name LIKE '%${product_name}%'`
+        : ` product_name LIKE '%${blank}%'`
+    const cat = category_id !== '' ? ` AND category_id = ${category_id}` : ''
+    const sort = sortBy !== '' ? ` ORDER BY ${sortBy}` : ` ORDER BY ${defsort}`
     return new Promise((resolve, reject) => {
       connection.query(
-        `SELECT * FROM product WHERE category_id LIKE '%${category_id}%' ORDER BY ${sortBy} LIMIT ? OFFSET ?`,
-        [limit, offset],
-        (error, result) => {
-          !error ? resolve(result) : reject(new Error(error))
-        }
-      )
-    })
-  },
-  searchProductByNameModel: (product_name, limit, offset) => {
-    return new Promise((resolve, reject) => {
-      connection.query(
-        `SELECT * FROM product WHERE product_name LIKE '%${product_name}%' LIMIT ${limit} OFFSET ${offset}`,
-        (error, result) => {
-          !error ? resolve(result) : reject(new Error(error))
-        }
-      )
-    })
-  },
-  searchProductByNameCatModel: (product_name, category_id, limit, offset) => {
-    return new Promise((resolve, reject) => {
-      connection.query(
-        `SELECT * FROM product WHERE product_name LIKE '%${product_name}%' AND category_id LIKE '%${category_id}%' LIMIT ${limit} OFFSET ${offset}`,
-        (error, result) => {
-          !error ? resolve(result) : reject(new Error(error))
-        }
-      )
-    })
-  },
-  getProductByCatModel: (category_id, limit, offset) => {
-    return new Promise((resolve, reject) => {
-      connection.query(
-        `SELECT * FROM product WHERE category_id = '${category_id}' LIMIT ${limit} OFFSET ${offset}`,
-        (error, result) => {
-          !error ? resolve(result) : reject(new Error(error))
-        }
-      )
-    })
-  },
-  getProductByNameCatSortModel: (
-    product_name,
-    category_id,
-    sortBy,
-    limit,
-    offset
-  ) => {
-    return new Promise((resolve, reject) => {
-      connection.query(
-        `SELECT * FROM product WHERE product_name LIKE '%${product_name}' AND category_id LIKE '%${category_id}%' ORDER BY ${sortBy} LIMIT ${limit} OFFSET ${offset}`,
-        (error, result) => {
-          !error ? resolve(result) : reject(new Error(error))
-        }
-      )
-    })
-  },
-  getProductByNameSortModel: (product_name, sortBy, limit, offset) => {
-    return new Promise((resolve, reject) => {
-      connection.query(
-        `SELECT * FROM product WHERE product_name LIKE '%${product_name}' ORDER BY ${sortBy} LIMIT ${limit} OFFSET ${offset}`,
+        `SELECT * FROM product WHERE ${name}${cat}${sort} LIMIT ${limit} OFFSET ${offset}`,
         (error, result) => {
           !error ? resolve(result) : reject(new Error(error))
         }

@@ -1,15 +1,10 @@
 const {
-  getProductModel,
   getProductCountModel,
   getProductByIdModel,
   deleteProductByIdModel,
   postProductModel,
   patchProductModel,
-  // sortProductModel,
-  searchProductByNameModel,
-  getProductByNameCatSortModel,
-  getProductByCatModel,
-  getProductByNameSortModel
+  getProductModel
 } = require('../model/product')
 const helper = require('../helper/response')
 const qs = require('querystring')
@@ -24,8 +19,7 @@ module.exports = {
       page = parseInt(page)
       limit = parseInt(limit)
 
-      category_id = parseInt(category_id)
-      const totalData = await getProductCountModel()
+      const totalData = await getProductCountModel(product_name, category_id)
       const totalPage = Math.ceil(totalData / limit)
       const offset = page * limit - limit
       const prevLink =
@@ -44,63 +38,20 @@ module.exports = {
         nextLink: nextLink && `http://localhost:3000/product?${nextLink}`,
         prevLink: prevLink && `http://localhost:3000/product?${prevLink}`
       }
-      if (product_name) {
-        const result = category_id
-          ? await getProductByNameCatSortModel(
-              product_name,
-              category_id,
-              sortBy,
-              limit,
-              offset
-            )
-          : sortBy
-            ? await getProductByNameSortModel(product_name, sortBy, limit, offset)
-            : await searchProductByNameModel(product_name, limit, offset)
-
-        if (result.length > 0) {
-          const newData = { result, pageInfo }
-          client.setex(
-            `getproduct:${JSON.stringify(request.query)}`,
-            3600,
-            JSON.stringify(newData)
-          )
-          return helper.response(
-            response,
-            200,
-            `Success Get ${totalData} Product(s) by name ${product_name}`,
-            result,
-            pageInfo
-          )
-        } else {
-          return helper.response(
-            response,
-            200,
-            `Product with the name ${product_name} does not exist`,
-            result
-          )
-        }
-      } else {
-        const result =
-          // sortBy
-          //   ? await sortProductModel(category_id, sortBy, limit, offset)
-          //   :
-          category_id
-            ? await getProductByCatModel(category_id, limit, offset)
-            : await getProductModel(limit, offset)
-        const newData = { result, pageInfo }
-        client.setex(
-          `getproduct:${JSON.stringify(request.query)}`,
-          3600,
-          JSON.stringify(newData)
-        )
-        return helper.response(
-          response,
-          200,
-          'Success Get Product',
-          result,
-          pageInfo
-        )
-      }
+      const result = await getProductModel(
+        product_name,
+        category_id,
+        sortBy,
+        limit,
+        offset
+      )
+      return helper.response(
+        response,
+        200,
+        'Success Get Product',
+        result,
+        pageInfo
+      )
     } catch (error) {
       return helper.response(response, 400, 'Bad Request', error)
     }
