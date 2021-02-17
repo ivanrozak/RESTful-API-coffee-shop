@@ -8,6 +8,7 @@ const {
 } = require('../model/coupon')
 const helper = require('../helper/response')
 const qs = require('querystring')
+const fs = require('fs')
 
 module.exports = {
   getCoupon: async (request, response) => {
@@ -25,9 +26,7 @@ module.exports = {
       const nextLink =
         page < totalPage
           ? qs.stringify({ ...request.query, ...{ page: page + 1 } })
-          : null // page=...&limit=...
-      // console.log(request.query)
-      // console.log(qs.stringify(request.query))
+          : null
       const pageInfo = {
         page,
         totalPage,
@@ -73,6 +72,10 @@ module.exports = {
       const checkId = await getCouponByIdModel(id)
 
       if (checkId.length > 0) {
+        fs.unlink(`./uploads/coupons/${checkId[0].coupon_image}`, (err) => {
+          if (err) throw err
+          console.log('Success delete image coupon')
+        })
         const result = await deleteCouponByIdModel(id)
         return helper.response(
           response,
@@ -125,11 +128,24 @@ module.exports = {
         coupon_start,
         coupon_end
       } = request.body
-      // disini kondisi validation
+
+      let newImg
+      const checkImg = await getCouponByIdModel(id)
+
+      if (request.file === undefined) {
+        newImg = checkImg[0].coupon_image
+      } else {
+        newImg = request.file.filename
+        fs.unlink(`./uploads/coupons/${checkImg[0].coupon_image}`, (err) => {
+          if (err) throw err
+          console.log('Success Delete Image')
+        })
+      }
+
       const setData = {
         coupon_code,
         coupon_discount,
-        coupon_image: request.file === undefined ? '' : request.file.filename,
+        coupon_image: newImg,
         coupon_min_purchase,
         coupon_max_limit,
         coupon_start,
