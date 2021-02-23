@@ -2,13 +2,14 @@ const {
   getHistoryModel,
   getHistoryCountModel,
   getHistoryByIdModel,
-  deleteHistoryByIdModel,
+  deleteHistoryByInvoiceModel,
   postHistoryModel,
   patchHistoryModel,
   getHistoryYearlyModel,
   getHistoryWeeklyModel,
   getHistoryDailyModel,
-  getHistoryByUserIdModel
+  getHistoryByUserIdModel,
+  getHistoryByInvoiceModel
 } = require('../model/history')
 const helper = require('../helper/response')
 const qs = require('querystring')
@@ -29,9 +30,7 @@ module.exports = {
       const nextLink =
         page < totalPage
           ? qs.stringify({ ...request.query, ...{ page: page + 1 } })
-          : null // page=...&limit=...
-      // console.log(request.query)
-      // console.log(qs.stringify(request.query))
+          : null
       const pageInfo = {
         page,
         totalPage,
@@ -48,7 +47,6 @@ module.exports = {
         result,
         pageInfo
       )
-      // response.status(200).send(result)
     } catch (error) {
       return helper.response(response, 400, 'Bad Request', error)
     }
@@ -71,21 +69,25 @@ module.exports = {
       return helper.response(response, 400, 'Bad Request', error)
     }
   },
-  deleteHistoryById: async (request, response) => {
+  deleteHistoryByInvoice: async (request, response) => {
     try {
-      const { id } = request.params
-      const checkId = await getHistoryByIdModel(id)
+      const { invoice } = request.params
+      const checkinvoice = await getHistoryByInvoiceModel(invoice)
 
-      if (checkId.length > 0) {
-        const result = await deleteHistoryByIdModel(id)
+      if (checkinvoice.length > 0) {
+        const result = await deleteHistoryByInvoiceModel(invoice)
         return helper.response(
           response,
           200,
-          'Success Delete History By Id',
+          'Success Delete History By invoice',
           result
         )
       } else {
-        return helper.response(response, 404, `History By Id : ${id} Not Found`)
+        return helper.response(
+          response,
+          404,
+          `History By invoice : ${invoice} Not Found`
+        )
       }
     } catch (error) {
       return helper.response(response, 400, 'Bad Request', error)
@@ -94,20 +96,28 @@ module.exports = {
   postHistory: async (request, response) => {
     try {
       const {
-        history_invoice,
+        invoice,
         payment_method,
-        delivery_method_id,
+        sub_total,
+        tax_fees,
+        grand_total,
+        shipping,
+        discount,
         history_status,
         user_id
       } = request.body
 
       const setData = {
-        history_invoice,
+        invoice,
         payment_method,
-        delivery_method_id,
+        sub_total,
+        tax_fees,
+        grand_total,
+        shipping,
+        discount,
         history_status,
         user_id,
-        history_created_at: new Date()
+        created_at: new Date()
       }
       const result = await postHistoryModel(setData)
       return helper.response(response, 200, 'Success Post History', result)
@@ -118,14 +128,11 @@ module.exports = {
   patchHistory: async (request, response) => {
     try {
       const { id } = request.params
-      const { sub_total } = request.body
-      // disini kondisi validation
       const setData = {
-        sub_total
+        history_status: 1
       }
       const checkId = await getHistoryByIdModel(id)
       if (checkId.length > 0) {
-        // proses update data
         const result = await patchHistoryModel(setData, id)
         return helper.response(response, 200, 'Update History Success', result)
       } else {

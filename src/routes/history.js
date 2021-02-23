@@ -3,7 +3,7 @@ const { authorization, isAdmin } = require('../middleware/auth')
 const {
   getHistory,
   getHistoryById,
-  deleteHistoryById,
+  deleteHistoryByInvoice,
   postHistory,
   patchHistory,
   getHistoryYearly,
@@ -14,12 +14,12 @@ const {
 
 router.get('/', authorization, isAdmin, getHistory)
 router.get('/:id', authorization, getHistoryById)
-router.delete('/:id', authorization, isAdmin, deleteHistoryById)
+router.delete('/:invoice', authorization, deleteHistoryByInvoice)
 router.post('/', authorization, postHistory)
 router.patch('/:id', authorization, isAdmin, patchHistory)
 router.get('/total/year', authorization, isAdmin, getHistoryYearly)
 router.get('/total/week', authorization, isAdmin, getHistoryWeekly)
 router.get('/total/day', authorization, isAdmin, getHistoryDaily)
-router.get('/user/:user_id', authorization, isAdmin, getHistoryByUserId)
+router.get('/user/:user_id', authorization, getHistoryByUserId)
 
 module.exports = router

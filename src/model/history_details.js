@@ -1,17 +1,6 @@
 const connection = require('../config/mysql')
 
 module.exports = {
-  getHistoryDetailsModel: (limit, offset) => {
-    return new Promise((resolve, reject) => {
-      connection.query(
-        'SELECT * FROM detail_history LIMIT ? OFFSET ?',
-        [limit, offset],
-        (error, result) => {
-          !error ? resolve(result) : reject(new Error(error))
-        }
-      )
-    })
-  },
   getHistoryDetailsByIdModel: (id) => {
     return new Promise((resolve, reject) => {
       connection.query(
@@ -23,11 +12,22 @@ module.exports = {
       )
     })
   },
-  deleteHistoryDetailsByIdModel: (id) => {
+  getHistoryDetailsByInvoiceModel: (invoice) => {
     return new Promise((resolve, reject) => {
       connection.query(
-        'DELETE FROM detail_history WHERE detail_history_id = ?',
-        id,
+        'SELECT * FROM detail_history WHERE invoice = ?',
+        invoice,
+        (error, result) => {
+          !error ? resolve(result) : reject(new Error(error))
+        }
+      )
+    })
+  },
+  deleteHistoryDetailsByInvoiceModel: (invoice) => {
+    return new Promise((resolve, reject) => {
+      connection.query(
+        'DELETE FROM detail_history WHERE invoice = ?',
+        invoice,
         (error, result) => {
           !error ? resolve(result) : reject(new Error(error))
         }
@@ -49,35 +49,6 @@ module.exports = {
           } else {
             reject(new Error(error))
           }
-        }
-      )
-    })
-  },
-  patchHistoryDetailsModel: (setData, id) => {
-    return new Promise((resolve, reject) => {
-      connection.query(
-        'UPDATE detail_history SET ? WHERE detail_history_id = ?',
-        [setData, id],
-        (error, result) => {
-          if (!error) {
-            const newResult = {
-              detail_history_id: id,
-              ...setData
-            }
-            resolve(newResult)
-          } else {
-            reject(new Error(error))
-          }
-        }
-      )
-    })
-  },
-  getHistoryDetailsCountModel: () => {
-    return new Promise((resolve, reject) => {
-      connection.query(
-        'SELECT COUNT(*) AS total FROM detail_history',
-        (error, result) => {
-          !error ? resolve(result[0].total) : reject(new Error(error))
         }
       )
     })

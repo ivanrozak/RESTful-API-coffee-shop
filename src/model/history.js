@@ -23,11 +23,22 @@ module.exports = {
       )
     })
   },
-  deleteHistoryByIdModel: (id) => {
+  getHistoryByInvoiceModel: (invoice) => {
     return new Promise((resolve, reject) => {
       connection.query(
-        'DELETE FROM history WHERE history_id = ?',
-        id,
+        'SELECT * FROM history WHERE invoice = ?',
+        invoice,
+        (error, result) => {
+          !error ? resolve(result) : reject(new Error(error))
+        }
+      )
+    })
+  },
+  deleteHistoryByInvoiceModel: (invoice) => {
+    return new Promise((resolve, reject) => {
+      connection.query(
+        'DELETE FROM history WHERE invoice = ?',
+        invoice,
         (error, result) => {
           !error ? resolve(result) : reject(new Error(error))
         }
