@@ -4,7 +4,6 @@ module.exports = {
   registerUserModel: (setData) => {
     return new Promise((resolve, reject) => {
       connection.query('INSERT INTO user SET ?', setData, (error, result) => {
-        console.log(error)
         if (!error) {
           const newResult = {
             user_id: result.insertId,

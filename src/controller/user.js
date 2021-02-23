@@ -45,13 +45,13 @@ module.exports = {
     try {
       const { user_email, user_password } = request.body
       const checkDataUser = await checkEmailModel(user_email)
-      console.log(checkDataUser)
+
       if (checkDataUser.length > 0) {
         const checkPassword = bcrypt.compareSync(
           user_password,
           checkDataUser[0].user_password
         )
-        console.log(checkPassword)
+
         if (checkPassword) {
           const { user_id, user_name, user_email, user_role } = checkDataUser[0]
           const payload = {

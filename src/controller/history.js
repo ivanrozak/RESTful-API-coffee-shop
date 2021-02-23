@@ -186,7 +186,6 @@ module.exports = {
     try {
       const { user_id } = request.params
       const result = await getHistoryByUserIdModel(user_id)
-      console.log(result)
 
       if (result.length > 0) {
         return helper.response(

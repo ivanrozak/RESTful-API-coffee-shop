@@ -4,8 +4,6 @@ const helper = require('../helper/response')
 module.exports = {
   authorization: (request, response, next) => {
     let token = request.headers.authorization
-    // console.log(token)
-    // proses 1 cek apakah header dimasukkan?
     if (token) {
       token = token.split(' ')[1]
       jwt.verify(token, 'RAHASIA', (error, result) => {
@@ -15,10 +13,8 @@ module.exports = {
         ) {
           return helper.response(response, 403, error.message)
         } else {
-          // proses pengecekan role
-          console.log(result)
           request.decodeToken = result
-          next() // untuk lanjut ke proses middleware berikutnya
+          next()
         }
       })
     } else {

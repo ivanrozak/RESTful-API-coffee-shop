@@ -79,7 +79,6 @@ module.exports = {
           detail_delivery,
           created_at: new Date()
         }
-        console.log(setData)
         result = await postHistoryDetailsModel(setData)
       }
       return helper.response(

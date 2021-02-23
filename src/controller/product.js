@@ -120,8 +120,6 @@ module.exports = {
         product_deliv_dine,
         product_deliv_take
       } = request.body
-      // disini kondisi validation
-      // console.log(request.file)
       const setData = {
         category_id,
         product_name,
@@ -143,7 +141,6 @@ module.exports = {
         product_deliv_dine,
         product_deliv_take
       }
-      console.log(setData)
       const result = await postProductModel(setData)
       return helper.response(response, 200, 'Success Post Product', result)
     } catch (error) {
