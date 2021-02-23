@@ -7,7 +7,7 @@ const routesNavigation = require('./src/routesNavigation')
 // =====================
 const app = express()
 app.use(morgan('dev'))
-app.use(express.static('uploads')) // agar folder uploads bisa diakses semua browser/user, tanpa ini : path not found
+app.use('/api3', express.static('uploads'))
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({ extended: false }))
 app.use(cors())
@@ -19,12 +19,12 @@ app.use((request, response, next) => {
   )
   next()
 })
-app.use('/', routesNavigation)
+app.use('/api3', routesNavigation)
 
 app.get('*', (request, response) => {
   response.status(404).send('Path not found !')
 })
 
-app.listen(3000, () => {
+app.listen(3002, () => {
   console.log('Express app is listening on port 3000')
 })

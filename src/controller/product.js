@@ -178,11 +178,16 @@ module.exports = {
       if (request.file === undefined) {
         newImg = checkImg[0].product_image
       } else {
+        if (checkImg[0].product_image) {
+          fs.unlink(
+            `./uploads/products/${checkImg[0].product_image}`,
+            (err) => {
+              if (err) throw err
+              console.log('Success Delete Image')
+            }
+          )
+        }
         newImg = request.file.filename
-        fs.unlink(`./uploads/products/${checkImg[0].product_image}`, (err) => {
-          if (err) throw err
-          console.log('Success Delete Image')
-        })
       }
 
       const setData = {
