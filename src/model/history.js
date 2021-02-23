@@ -96,7 +96,7 @@ module.exports = {
   getHistoryYearlyModel: () => {
     return new Promise((resolve, reject) => {
       connection.query(
-        'SELECT SUM(sub_total) AS total_by_year FROM history WHERE YEAR(history_created_at) = YEAR(NOW())',
+        'SELECT SUM(grand_total) AS total_by_year FROM history WHERE YEAR(created_at) = YEAR(NOW())',
         (error, result) => {
           !error ? resolve(result) : reject(new Error(error))
         }
@@ -106,7 +106,7 @@ module.exports = {
   getHistoryWeeklyModel: () => {
     return new Promise((resolve, reject) => {
       connection.query(
-        'SELECT COUNT(history_id) AS total_by_week FROM history WHERE YEARWEEK(history_created_at) = YEARWEEK(NOW())',
+        'SELECT COUNT(history_id) AS total_by_week FROM history WHERE YEARWEEK(created_at) = YEARWEEK(NOW())',
         (error, result) => {
           !error ? resolve(result) : reject(new Error(error))
         }
@@ -116,7 +116,7 @@ module.exports = {
   getHistoryDailyModel: (dateNow) => {
     return new Promise((resolve, reject) => {
       connection.query(
-        `SELECT SUM(sub_total) AS total_daily FROM history WHERE history_created_at LIKE '%${dateNow}%'`,
+        `SELECT SUM(grand_total) AS total_daily FROM history WHERE created_at LIKE '%${dateNow}%'`,
         (error, result) => {
           !error ? resolve(result) : reject(new Error(error))
         }
