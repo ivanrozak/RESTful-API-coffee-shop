@@ -4,6 +4,8 @@ In this Project I built a RESTful API using nodejs expressjs and mySQL to handle
 
 [More about Express](https://en.wikipedia.org/wiki/Express.js)
 
+![alt text](https://github.com/ivanrozak/Coffee-Shop_Vuemmerce/blob/main/src/assets/img/product/coffeeshop.jpg)
+
 ## Built With
 
 [![Express.js](https://img.shields.io/badge/Express.js-4.x-orange.svg?style=rounded-square)](https://expressjs.com/en/starter/installing.html)
