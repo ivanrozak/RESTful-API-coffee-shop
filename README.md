@@ -43,6 +43,12 @@ Use end point below :
 
 https://documenter.getpostman.com/view/11826307/TVsoGpzv
 
+## Contact
+
+Ivan Rozak - [@ivanrozak](https://instagram.com/ivanrozak) - ivanrozack@gmail.com
+
+Project Link: [Coffee Shop Online](https://lacoffee.netlify.app)
+
 ## License
 
 © [Ivan Rozak](https://github.com/ivanrozak/)
