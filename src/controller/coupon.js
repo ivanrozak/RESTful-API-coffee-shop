@@ -32,8 +32,8 @@ module.exports = {
         totalPage,
         limit,
         totalData,
-        nextLink: nextLink && `http://localhost:3000/coupon?${nextLink}`,
-        prevLink: prevLink && `http://localhost:3000/coupon?${prevLink}`
+        nextLink: nextLink && `${process.env.URL_BE}coupon?${nextLink}`,
+        prevLink: prevLink && `${process.env.URL_BE}coupon?${prevLink}`
       }
       const result = await getCouponModel(limit, offset)
       return helper.response(

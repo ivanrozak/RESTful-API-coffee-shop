@@ -35,8 +35,8 @@ module.exports = {
         totalPage,
         limit,
         totalData,
-        nextLink: nextLink && `http://localhost:3000/product?${nextLink}`,
-        prevLink: prevLink && `http://localhost:3000/product?${prevLink}`
+        nextLink: nextLink && `${process.env.URL_BE}product?${nextLink}`,
+        prevLink: prevLink && `${process.env.URL_BE}product?${prevLink}`
       }
       const result = await getProductModel(
         product_name,
@@ -151,7 +151,6 @@ module.exports = {
     try {
       const { id } = request.params
       const {
-        // category_id,
         product_name,
         product_price,
         product_desc,
@@ -167,7 +166,6 @@ module.exports = {
         product_deliv_dine,
         product_deliv_take
       } = request.body
-      // disini kondisi validation
 
       let newImg
       const checkImg = await getProductByIdModel(id)
@@ -188,7 +186,6 @@ module.exports = {
       }
 
       const setData = {
-        // category_id,
         product_name,
         product_price,
         product_desc,

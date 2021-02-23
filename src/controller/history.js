@@ -36,8 +36,8 @@ module.exports = {
         totalPage,
         limit,
         totalData,
-        nextLink: nextLink && `http://localhost:3000/history?${nextLink}`,
-        prevLink: prevLink && `http://localhost:3000/history?${prevLink}`
+        nextLink: nextLink && `${process.env.URL_BE}history?${nextLink}`,
+        prevLink: prevLink && `${process.env.URL_BE}history?${prevLink}`
       }
       const result = await getHistoryModel(limit, offset)
       return helper.response(
